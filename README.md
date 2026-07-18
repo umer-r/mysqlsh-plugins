@@ -23,7 +23,7 @@ A modular, scalable user management plugin for **MySQL Shell 9.x**. It provides 
 2. Clone or copy the `user` plugin folder into the plugins directory:
    ```bash
    # Your plugin path must be:
-   ~/.mysqlsh/plugins/user/
+   git clone https://github.com/umer-r/mysqlsh-plugins.git ~/.mysqlsh/plugins/
    ```
 
 3. Start MySQL Shell. The plugin will be automatically discovered and loaded under the `user` namespace.
