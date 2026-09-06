@@ -27,7 +27,7 @@ def log(message):
         f.write("[{}] {}\n".format(datetime.now(), message))
 
 
-def log_created_user(user_host, password, grants):
+def log_created_user(user_host, password, grants, server_connection=None):
     """
     Log a successful user creation event.
 
@@ -35,10 +35,16 @@ def log_created_user(user_host, password, grants):
         user_host (str): The full 'user'@'host' identifier.
         password (str): The password that was set (plaintext — keep log secure).
         grants (list): List of raw grant strings that were applied.
+        server_connection (str, optional): Server connection where the user was created.
     """
-    log("Created user: {}, password: {}, grants: {}".format(
-        user_host, password, grants
-    ))
+    if server_connection:
+        log("Created user: {}, password: {}, grants: {}, server: {}".format(
+            user_host, password, grants, server_connection
+        ))
+    else:
+        log("Created user: {}, password: {}, grants: {}".format(
+            user_host, password, grants
+        ))
 
 
 def log_synced_grants(origin, destination, count):

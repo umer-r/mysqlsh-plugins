@@ -9,7 +9,7 @@ import secrets
 import mysqlsh
 from mysqlsh.plugin_manager import plugin_function
 
-from lib.session import require_session
+from lib.session import require_session, get_server_connection
 from lib.logger import log_created_user
 from lib.output import print_table
 
@@ -30,6 +30,8 @@ def create(session=None):
     session = require_session(session)
     if session is None:
         return
+
+    server_conn = get_server_connection(session)
 
     # ── Collect input ────────────────────────────────────────────────────────
     username = shell.prompt("username: ").strip()
@@ -80,7 +82,7 @@ def create(session=None):
                         "GRANT {} ON *.* TO {}".format(grant, user_host)
                     )
 
-            log_created_user(user_host, password, grants)
+            log_created_user(user_host, password, grants, server_conn)
 
     except Exception as e:
         print("Error creating user: {}".format(e))

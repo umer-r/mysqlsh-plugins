@@ -24,3 +24,45 @@ def require_session(session=None):
     if s is None:
         print("No active session. Please connect to a database first.")
     return s
+
+
+def get_server_connection(session):
+    """
+    Returns a string identifying the server connection for the given session.
+
+    Checks session properties (uri/get_uri) first, and falls back to
+    querying @@hostname and @@port from the server.
+
+    Args:
+        session: Active MySQL session.
+
+    Returns:
+        str: Server connection details (e.g. 'root@localhost:3306'),
+             or 'unknown' if it cannot be determined.
+    """
+    if session is None:
+        return "unknown"
+
+    # Try session.uri or session.get_uri()
+    uri = getattr(session, 'uri', None)
+    if uri:
+        return str(uri)
+    if hasattr(session, 'get_uri') and callable(session.get_uri):
+        try:
+            u = session.get_uri()
+            if u:
+                return str(u)
+        except Exception:
+            pass
+
+    # Fallback to querying MySQL server globals
+    try:
+        res = session.run_sql("SELECT @@hostname, @@port")
+        rows = res.fetch_all()
+        if rows and len(rows[0]) >= 2:
+            return "{}:{}".format(rows[0][0], rows[0][1])
+    except Exception:
+        pass
+
+    return "unknown"
+
