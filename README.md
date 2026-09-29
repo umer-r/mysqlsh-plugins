@@ -11,6 +11,7 @@ A modular, scalable user management plugin for **MySQL Shell 9.x**. It provides 
 - **`user.sync_grants(users_dict)`**: Synchronizes grants from an origin user to a destination user (e.g. `{'origin_user': 'alice', 'destination_user': 'bob'}`), automatically rewriting host signatures.
 - **`user.delete(target_user)`**: Safely removes a user account. If no host is specified, resolves all hosts where the user exists, prints a clear warning warning of irreversible deletion, and prompts for explicit confirmation before executing `DROP USER`.
 - **`user.rotate_pass()`**: Safely rotates user account passwords across one or all hosts using single password rotation syntax (`ALTER USER ... IDENTIFIED BY`). Previews commands to be executed, requires explicit confirmation, displays results in an ASCII table, and logs the operation along with target server connection.
+- **`user.genpass()`**: Generates and outputs a random 16-character password containing alphanumeric and safe special characters (`^#()[]{}<>+=-`) without executing SQL or writing to audit logs.
 
 
 ---
@@ -79,6 +80,14 @@ PY > user.rotate_pass()
 # Or specify user upfront
 PY > user.rotate_pass("developer@localhost")
 ```
+
+### 6. Generate Password
+Generate a random 16-character password with safe special characters (`^#()[]{}<>+=-`) directly to the shell without executing SQL or writing to audit logs.
+```python
+# Output a random 16-character password
+PY > user.genpass()
+```
+
 
 ---
 

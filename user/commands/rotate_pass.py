@@ -3,9 +3,6 @@ commands/rotate_pass.py — user.rotate_pass plugin function.
 
 Rotates password for a MySQL user account across one or all hosts with confirmation.
 """
-import string
-import secrets
-
 import mysqlsh
 from mysqlsh.plugin_manager import plugin_function
 
@@ -13,6 +10,7 @@ from lib.session import require_session, get_server_connection
 from lib.parser import parse_user_host
 from lib.logger import log_rotated_password
 from lib.output import print_table
+from lib.password import generate_password
 
 
 @plugin_function("user.rotate_pass")
@@ -55,8 +53,7 @@ def rotate_pass(target_user=None, session=None):
     # ── 2. Password input / auto-generation ──────────────────────────────────
     password = shell.prompt("password [return for auto generated]: ").strip()
     if not password:
-        alphabet = string.ascii_letters + string.digits
-        password = ''.join(secrets.choice(alphabet) for _ in range(16))
+        password = generate_password()
 
     # ── 3. Host input and account resolution ─────────────────────────────────
     if h is not None:

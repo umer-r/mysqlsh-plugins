@@ -37,5 +37,7 @@ from commands.show_grants import show_grants # noqa: F401, E402
 from commands.sync_grants import sync_grants # noqa: F401, E402
 from commands.delete import delete           # noqa: F401, E402
 from commands.rotate_pass import rotate_pass # noqa: F401, E402
+from commands.genpass import genpass         # noqa: F401, E402
+
 
 

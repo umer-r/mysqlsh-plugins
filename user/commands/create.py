@@ -3,15 +3,13 @@ commands/create.py — user.create plugin function.
 
 Interactive wizard to create one or more MySQL user accounts.
 """
-import string
-import secrets
-
 import mysqlsh
 from mysqlsh.plugin_manager import plugin_function
 
 from lib.session import require_session, get_server_connection
 from lib.logger import log_created_user
 from lib.output import print_table
+from lib.password import generate_password
 
 
 @plugin_function("user.create")
@@ -46,8 +44,7 @@ def create(session=None):
         "password [Leave blank for random 16-char password]: "
     ).strip()
     if not password:
-        alphabet = string.ascii_letters + string.digits
-        password = ''.join(secrets.choice(alphabet) for _ in range(16))
+        password = generate_password()
 
     grants = []
     while True:

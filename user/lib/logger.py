@@ -59,14 +59,17 @@ def log_synced_grants(origin, destination, count):
     log("Synced {} grant(s) from {} to {}".format(count, origin, destination))
 
 
-def log_deleted_users(users_list):
+def log_deleted_users(users_list, server_connection=None):
     """
     Log user deletion events.
 
     Args:
         users_list (list): List of user_host identifiers deleted.
     """
-    log("Deleted user(s): {}".format(", ".join(users_list)))
+    if server_connection:
+        log("Deleted user(s): {}, server: {}".format(", ".join(users_list), server_connection))
+    else:
+        log("Deleted user(s): {}".format(", ".join(users_list)))
 
 
 def log_rotated_password(user_host, password, server_connection=None):

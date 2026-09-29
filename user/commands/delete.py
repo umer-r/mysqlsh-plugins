@@ -6,7 +6,7 @@ Deletes a MySQL user account across one or all hosts, with confirmation.
 import mysqlsh
 from mysqlsh.plugin_manager import plugin_function
 
-from lib.session import require_session
+from lib.session import require_session, get_server_connection
 from lib.parser import parse_user_host
 from lib.logger import log_deleted_users
 
@@ -76,7 +76,8 @@ def delete(target_user, session=None):
             print("Deleted user: {}".format(user_host))
             deleted_users.append(user_host)
 
-        log_deleted_users(deleted_users)
+        server_conn = get_server_connection(session)
+        log_deleted_users(deleted_users, server_conn)
         print("\nSuccessfully deleted {} user(s).".format(len(deleted_users)))
 
     except Exception as e:
