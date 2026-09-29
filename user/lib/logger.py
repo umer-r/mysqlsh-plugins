@@ -68,3 +68,23 @@ def log_deleted_users(users_list):
     """
     log("Deleted user(s): {}".format(", ".join(users_list)))
 
+
+def log_rotated_password(user_host, password, server_connection=None):
+    """
+    Log a password rotation event.
+
+    Args:
+        user_host (str): The full 'user'@'host' identifier.
+        password (str): The new password that was set.
+        server_connection (str, optional): Server connection where the password was rotated.
+    """
+    if server_connection:
+        log("Rotated password for user: {}, password: {}, server: {}".format(
+            user_host, password, server_connection
+        ))
+    else:
+        log("Rotated password for user: {}, password: {}".format(
+            user_host, password
+        ))
+
+

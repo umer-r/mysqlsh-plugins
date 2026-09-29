@@ -10,6 +10,8 @@ A modular, scalable user management plugin for **MySQL Shell 9.x**. It provides 
 - **`user.show_grants(target_user)`**: Quickly inspect grants for a user. If only a username is provided (e.g. `'alice'`), displays grants for all hosts. If `'alice@localhost'` is provided, displays grants for that specific host only.
 - **`user.sync_grants(users_dict)`**: Synchronizes grants from an origin user to a destination user (e.g. `{'origin_user': 'alice', 'destination_user': 'bob'}`), automatically rewriting host signatures.
 - **`user.delete(target_user)`**: Safely removes a user account. If no host is specified, resolves all hosts where the user exists, prints a clear warning warning of irreversible deletion, and prompts for explicit confirmation before executing `DROP USER`.
+- **`user.rotate_pass()`**: Safely rotates user account passwords across one or all hosts using single password rotation syntax (`ALTER USER ... IDENTIFIED BY`). Previews commands to be executed, requires explicit confirmation, displays results in an ASCII table, and logs the operation along with target server connection.
+
 
 ---
 
@@ -68,11 +70,22 @@ PY > user.delete("obsolete_user")
 PY > user.delete("obsolete_user@%")
 ```
 
+### 5. Rotate Password
+Safely rotate user account passwords with a preview of commands, confirmation prompt, and server audit logging.
+```python
+# Starts the interactive wizard (prompts for username, password, host)
+PY > user.rotate_pass()
+
+# Or specify user upfront
+PY > user.rotate_pass("developer@localhost")
+```
+
 ---
 
 ## Logging and Auditing
 
-Any write action (`create`, `sync_grants`, `delete`) is appended to a centralized audit log file at:
+Any write action (`create`, `sync_grants`, `delete`, `rotate_pass`) is appended to a centralized audit log file at:
 ```bash
 ~/.mysqlsh/plugins/user/logs/user_plugin.log
 ```
+
