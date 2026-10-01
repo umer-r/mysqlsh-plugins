@@ -1,9 +1,10 @@
 """
-lib/parser.py — User / host string parsing utilities.
+lib/parser.py — User / host and grant string parsing utilities.
 
 Centralises all quoting and splitting logic so commands don't each
 re-implement the same string manipulation.
 """
+from lib.parse_grants import parse_grant, parse_grants  # noqa: F401
 
 
 def parse_user_host(user_str):

@@ -10,6 +10,7 @@ from lib.session import require_session, get_server_connection
 from lib.logger import log_created_user
 from lib.output import print_table
 from lib.password import generate_password
+from lib.parse_grants import parse_grant
 
 
 @plugin_function("user.create")
@@ -48,12 +49,16 @@ def create(session=None):
 
     grants = []
     while True:
-        grant = shell.prompt(
-            "grants [e.g. INSERT,UPDATE:db_name | empty to finish]: "
+        grant_input = shell.prompt(
+            "grants [e.g. INSERT,UPDATE:db.table | ALL:db.* | REPLICATION | return to finish]: "
         ).strip()
-        if not grant:
+        if not grant_input:
             break
-        grants.append(grant)
+        try:
+            privs, target = parse_grant(grant_input)
+            grants.append((privs, target))
+        except ValueError as e:
+            print("Invalid grant: {}".format(e))
 
     # ── Execute ──────────────────────────────────────────────────────────────
     created = []  # (username, host, password)
@@ -66,20 +71,13 @@ def create(session=None):
             )
             created.append((username, host, password))
 
-            for grant in grants:
-                if ':' in grant:
-                    privs, db = grant.split(':', 1)
-                    db = db.strip()
-                    db_str = '*.*' if db == '*' else '`{}`.*'.format(db)
-                    session.run_sql(
-                        "GRANT {} ON {} TO {}".format(privs.strip(), db_str, user_host)
-                    )
-                else:
-                    session.run_sql(
-                        "GRANT {} ON *.* TO {}".format(grant, user_host)
-                    )
+            for privs, target in grants:
+                session.run_sql(
+                    "GRANT {} ON {} TO {}".format(privs, target, user_host)
+                )
 
-            log_created_user(user_host, password, grants, server_conn)
+            log_grants = ["{} ON {}".format(p, t) for p, t in grants]
+            log_created_user(user_host, password, log_grants, server_conn)
 
     except Exception as e:
         print("Error creating user: {}".format(e))
